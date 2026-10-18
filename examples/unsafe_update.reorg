@@ -1,0 +1,1 @@
+﻿UPDATE stats SET visits = visits + 1;

@@ -1,0 +1,1 @@
+﻿REINDEX orders ON (region, ts);
