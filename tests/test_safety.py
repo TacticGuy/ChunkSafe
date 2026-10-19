@@ -30,3 +30,8 @@ def test_unsafe_in_second_statement_reports_location(catalog):
     with pytest.raises(UnsafeRetryError) as e:
         compile_frontend("REINDEX orders ON (ts);\nUPDATE stats SET visits = visits + 1;", catalog)
     assert e.value.line == 2
+
+
+def test_backward_dependency_warns(catalog):
+    with pytest.warns(UserWarning, match="earlier task 1"):
+        compile_frontend("UPDATE stats SET views = visits * 2; UPDATE stats SET visits = 0;", catalog)
