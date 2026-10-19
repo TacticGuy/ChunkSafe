@@ -1,0 +1,31 @@
+// ChunkSafe source language (see design.md section 2)
+start: statement+
+
+?statement: reindex | repartition | update
+
+reindex:     "REINDEX"i NAME "ON"i "(" NAME ("," NAME)* ")" ";"
+repartition: "REPARTITION"i NAME "BY"i NAME ";"
+update:      "UPDATE"i NAME "SET"i assign ("," assign)* ";"
+
+assign: NAME "=" expr
+
+?expr: term
+     | expr "+" term -> add
+     | expr "-" term -> sub
+?term: factor
+     | term "*" factor -> mul
+     | term "/" factor -> div
+?factor: NUMBER   -> number
+       | STRING   -> string
+       | NAME     -> colref
+       | "-" factor -> neg
+       | "(" expr ")"
+
+NAME: /[A-Za-z_][A-Za-z0-9_]*/
+NUMBER: /\d+(\.\d+)?/
+STRING: /'[^']*'/
+
+COMMENT: /--[^\n]*/
+%import common.WS
+%ignore WS
+%ignore COMMENT
